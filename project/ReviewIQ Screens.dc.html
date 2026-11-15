@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&amp;family=IBM+Plex+Serif:wght@500&amp;display=swap">
+<style>html,body{margin:0;background:#E6E1D5;color:#1D1C1A}*{box-sizing:border-box}a{color:#1F5C4A}a:hover{color:#174838}</style>
+</helmet>
+<section style="padding:64px; font-family:'IBM Plex Mono',monospace;">
+  <h1 style="margin:0; font-family:'IBM Plex Serif',serif; font-weight:500; font-size:40px;">ReviewIQ — screens and states</h1>
+  <p style="margin:10px 0 0; font-size:15px; color:#3B3934;">Every frame is the live app. Kazakh glyph check: <span style="font-size:20px; color:#1D1C1A;">Әә Ғғ Ққ Ңң Өө Ұұ Үү Һһ Іі</span></p>
+
+  <h2 style="margin:56px 0 20px; font-size:14px; letter-spacing:.08em; text-transform:uppercase;">Desktop · 1440</h2>
+  <div style="display:flex; flex-wrap:wrap; gap:48px;">
+    <div id="1a"><p style="margin:0 0 10px; font-size:14px;"><b style="background:#1D1C1A; color:#F5F2EA; padding:2px 6px; border-radius:2px;">1a</b> EN · Entry, demo loaded</p><div style="width:1440px; height:1000px; overflow:auto; border:1px solid #1D1C1A; background:#F5F2EA;"><dc-import name="ReviewIQ" lang="en" preset="demo-input" embedded="{{ true }}" hint-size="1440px,1000px"></dc-import></div></div>
+    <div id="1b"><p style="margin:0 0 10px; font-size:14px;"><b style="background:#1D1C1A; color:#F5F2EA; padding:2px 6px; border-radius:2px;">1b</b> ҚАЗ · Entry, validation errors</p><div style="width:1440px; height:1000px; overflow:auto; border:1px solid #1D1C1A; background:#F5F2EA;"><dc-import name="ReviewIQ" lang="kk" preset="errors" embedded="{{ true }}" hint-size="1440px,1000px"></dc-import></div></div>
+    <div id="1c"><p style="margin:0 0 10px; font-size:14px;"><b style="background:#1D1C1A; color:#F5F2EA; padding:2px 6px; border-radius:2px;">1c</b> EN · Results + evidence panel</p><div style="width:1440px; height:1000px; overflow:auto; border:1px solid #1D1C1A; background:#F5F2EA;"><dc-import name="ReviewIQ" lang="en" preset="results" embedded="{{ true }}" hint-size="1440px,1000px"></dc-import></div></div>
+    <div id="1d"><p style="margin:0 0 10px; font-size:14px;"><b style="background:#1D1C1A; color:#F5F2EA; padding:2px 6px; border-radius:2px;">1d</b> ҚАЗ · Results + evidence panel</p><div style="width:1440px; height:1000px; overflow:auto; border:1px solid #1D1C1A; background:#F5F2EA;"><dc-import name="ReviewIQ" lang="kk" preset="results" embedded="{{ true }}" hint-size="1440px,1000px"></dc-import></div></div>
+    <div id="1e"><p style="margin:0 0 10px; font-size:14px;"><b style="background:#1D1C1A; color:#F5F2EA; padding:2px 6px; border-radius:2px;">1e</b> EN · Action: save without topic or date</p><div style="width:1440px; height:1000px; overflow:auto; border:1px solid #1D1C1A; background:#F5F2EA;"><dc-import name="ReviewIQ" lang="en" preset="action-hint" embedded="{{ true }}" hint-size="1440px,1000px"></dc-import></div></div>
+    <div id="1f"><p style="margin:0 0 10px; font-size:14px;"><b style="background:#1D1C1A; color:#F5F2EA; padding:2px 6px; border-radius:2px;">1f</b> ҚАЗ · Empty state</p><div style="width:1440px; height:1000px; overflow:auto; border:1px solid #1D1C1A; background:#F5F2EA;"><dc-import name="ReviewIQ" lang="kk" preset="empty" embedded="{{ true }}" hint-size="1440px,1000px"></dc-import></div></div>
+  </div>
+
+  <h2 style="margin:72px 0 20px; font-size:14px; letter-spacing:.08em; text-transform:uppercase;">Mobile · 375</h2>
+  <div style="display:flex; flex-wrap:wrap; gap:40px;">
+    <div id="2a"><p style="margin:0 0 10px; font-size:14px;"><b style="background:#1D1C1A; color:#F5F2EA; padding:2px 6px; border-radius:2px;">2a</b> EN · Entry errors</p><div style="width:375px; height:812px; overflow:auto; border:1px solid #1D1C1A; background:#F5F2EA;"><dc-import name="ReviewIQ" lang="en" preset="errors" embedded="{{ true }}" hint-size="375px,812px"></dc-import></div></div>
+    <div id="2b"><p style="margin:0 0 10px; font-size:14px;"><b style="background:#1D1C1A; color:#F5F2EA; padding:2px 6px; border-radius:2px;">2b</b> ҚАЗ · Entry</p><div style="width:375px; height:812px; overflow:auto; border:1px solid #1D1C1A; background:#F5F2EA;"><dc-import name="ReviewIQ" lang="kk" preset="demo-input" embedded="{{ true }}" hint-size="375px,812px"></dc-import></div></div>
+    <div id="2c"><p style="margin:0 0 10px; font-size:14px;"><b style="background:#1D1C1A; color:#F5F2EA; padding:2px 6px; border-radius:2px;">2c</b> EN · Evidence under topic</p><div style="width:375px; height:812px; overflow:auto; border:1px solid #1D1C1A; background:#F5F2EA;"><dc-import name="ReviewIQ" lang="en" preset="results" embedded="{{ true }}" hint-size="375px,812px"></dc-import></div></div>
+    <div id="2d"><p style="margin:0 0 10px; font-size:14px;"><b style="background:#1D1C1A; color:#F5F2EA; padding:2px 6px; border-radius:2px;">2d</b> ҚАЗ · Evidence under topic</p><div style="width:375px; height:812px; overflow:auto; border:1px solid #1D1C1A; background:#F5F2EA;"><dc-import name="ReviewIQ" lang="kk" preset="results" embedded="{{ true }}" hint-size="375px,812px"></dc-import></div></div>
+    <div id="2e"><p style="margin:0 0 10px; font-size:14px;"><b style="background:#1D1C1A; color:#F5F2EA; padding:2px 6px; border-radius:2px;">2e</b> ҚАЗ · Action + feedback saved</p><div style="width:375px; height:812px; overflow:auto; border:1px solid #1D1C1A; background:#F5F2EA;"><dc-import name="ReviewIQ" lang="kk" preset="saved" embedded="{{ true }}" hint-size="375px,812px"></dc-import></div></div>
+    <div id="2f"><p style="margin:0 0 10px; font-size:14px;"><b style="background:#1D1C1A; color:#F5F2EA; padding:2px 6px; border-radius:2px;">2f</b> EN · Empty state</p><div style="width:375px; height:812px; overflow:auto; border:1px solid #1D1C1A; background:#F5F2EA;"><dc-import name="ReviewIQ" lang="en" preset="empty" embedded="{{ true }}" hint-size="375px,812px"></dc-import></div></div>
+  </div>
+</section>
+</x-dc>
+</body>
+</html>
