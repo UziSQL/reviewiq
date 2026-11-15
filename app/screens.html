@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReviewIQ Screens</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Serif:wght@500&display=swap">
+<style>
+html,body{margin:0;background:#E6E1D5;color:#1D1C1A}
+*{box-sizing:border-box}
+a{color:#1F5C4A}a:hover{color:#174838}
+section{padding:64px;font-family:'IBM Plex Mono',monospace}
+h1{margin:0;font-family:'IBM Plex Serif',serif;font-weight:500;font-size:40px}
+.sub{margin:10px 0 0;font-size:15px;color:#3B3934}
+.sub span{font-size:20px;color:#1D1C1A}
+h2{margin:56px 0 20px;font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+h2.m{margin-top:72px}
+.row{display:flex;flex-wrap:wrap;gap:48px}
+.row.m{gap:40px}
+.cap{margin:0 0 10px;font-size:14px}
+.cap b{background:#1D1C1A;color:#F5F2EA;padding:2px 6px;border-radius:2px}
+.cap a{margin-left:8px;font-size:13px}
+iframe{display:block;border:1px solid #1D1C1A;background:#F5F2EA}
+</style>
+</head>
+<body>
+<section>
+  <h1>ReviewIQ — screens and states</h1>
+  <p class="sub">Every frame is the live app. Kazakh glyph check: <span lang="kk">Әә Ғғ Ққ Ңң Өө Ұұ Үү Һһ Іі</span></p>
+  <h2>Desktop · 1440</h2>
+  <div class="row" id="desktop"></div>
+  <h2 class="m">Mobile · 375</h2>
+  <div class="row m" id="mobile"></div>
+</section>
+<script>
+  var frames = {
+    desktop: { w: 1440, h: 1000, items: [
+      ['1a', 'en', 'demo-input', 'EN · Entry, demo loaded'],
+      ['1b', 'kk', 'errors', 'ҚАЗ · Entry, validation errors'],
+      ['1c', 'en', 'results', 'EN · Results + evidence panel'],
+      ['1d', 'kk', 'results', 'ҚАЗ · Results + evidence panel'],
+      ['1e', 'en', 'action-hint', 'EN · Action: save without topic or date'],
+      ['1f', 'kk', 'empty', 'ҚАЗ · Empty state']
+    ] },
+    mobile: { w: 375, h: 812, items: [
+      ['2a', 'en', 'errors', 'EN · Entry errors'],
+      ['2b', 'kk', 'demo-input', 'ҚАЗ · Entry'],
+      ['2c', 'en', 'results', 'EN · Evidence under topic'],
+      ['2d', 'kk', 'results', 'ҚАЗ · Evidence under topic'],
+      ['2e', 'kk', 'saved', 'ҚАЗ · Action + feedback saved'],
+      ['2f', 'en', 'empty', 'EN · Empty state']
+    ] }
+  };
+  Object.keys(frames).forEach(function (k) {
+    var f = frames[k], row = document.getElementById(k);
+    f.items.forEach(function (it) {
+      var src = 'index.html?lang=' + it[1] + '&preset=' + it[2];
+      var d = document.createElement('div'); d.id = it[0];
+      d.innerHTML = '<p class="cap"><b>' + it[0] + '</b> ' + it[3] + ' <a href="' + src + '" target="_blank" rel="noopener">open</a></p>' +
+        '<iframe src="' + src + '" width="' + f.w + '" height="' + f.h + '" title="' + it[0] + ' ' + it[3] + '" loading="lazy"></iframe>';
+      row.appendChild(d);
+    });
+  });
+</script>
+</body>
+</html>

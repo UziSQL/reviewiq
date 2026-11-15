@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReviewIQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#F5F2EA; --paper2:#EFEBE1; --slip:#FBF9F4; --ink:#1D1C1A; --ink2:#3B3934; --muted:#5E5A52;
+  --rule:#CFC8B8; --slip-rule:#D6CFBF; --dash:#BFB7A5; --field:#858076; --track:#A39B8B; --hover:#ECE7DA;
+  --green:#1F5C4A; --green-d:#174838; --on-green:#F7F5EF; --ochre:#B9822F;
+  --serif:'IBM Plex Serif',Georgia,serif; --sans:'IBM Plex Sans',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+html,body{margin:0;background:var(--paper);color:var(--ink)}
+*{box-sizing:border-box}
+a{color:var(--green);text-decoration:underline;text-underline-offset:3px}
+a:hover{color:var(--green-d)}
+:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+::placeholder{color:#77726A}
+button{font-family:inherit}
+@keyframes riq-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.anim{animation:riq-in 180ms ease-out both}
+.anim-s{animation:riq-in 200ms ease-out both}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.riq{container-type:inline-size;min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding-left:clamp(20px,5cqi,64px);padding-right:clamp(20px,5cqi,64px)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mono{font-family:var(--mono)}
+.kicker{margin:0;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kicker.b{font-weight:600}
+.help{margin:0 0 10px;font-size:14px;color:var(--muted)}
+.lbl{display:block;font-weight:600;margin:0 0 2px}
+
+/* header */
+.hdr{border-bottom:1px solid var(--ink)}
+.hdr .wrap{padding-top:14px;padding-bottom:14px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px}
+.brand{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px}
+.wordmark{font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:-.01em}
+.tagline{font-size:14px;color:var(--muted)}
+.langsw{display:flex;align-items:center;gap:10px}
+.langsw-l{font-size:13px;color:var(--muted)}
+.seg{display:flex;border:1px solid var(--ink);border-radius:3px;overflow:hidden}
+.seg button{min-height:44px;min-width:60px;padding:0 14px;border:0;font-family:var(--mono);font-size:14px;font-weight:600;letter-spacing:.04em;cursor:pointer;background:transparent;color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.draft{border-bottom:1px solid var(--rule);background:var(--paper2)}
+.draft p{margin:0 auto;padding-top:8px;padding-bottom:8px;font-family:var(--mono);font-size:13px;color:var(--ink2)}
+
+/* fields */
+.input,.textarea{display:block;width:100%;font:inherit;color:var(--ink);background:var(--slip);border:1px solid var(--field);border-radius:3px}
+.input{min-height:48px;padding:10px 14px}
+.textarea{resize:vertical}
+.input[aria-invalid="true"],.textarea[aria-invalid="true"]{border:2px solid var(--ink)}
+.msg{display:flex;gap:10px;align-items:flex-start;margin:10px 0 0;font-size:15px;font-weight:500}
+.tag{flex:none;margin-top:2px;padding:2px 6px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:var(--paper);border-radius:2px}
+.okline{margin:0;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:10px 0;border-top:1px solid var(--green)}
+.oktag{padding:3px 8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--green);color:var(--on-green);border-radius:2px}
+
+/* buttons */
+.btn{font-family:inherit;line-height:1.3;text-align:left;white-space:normal;border-radius:3px;cursor:pointer}
+.btn-p{min-height:52px;padding:13px 24px;font-size:17px;font-weight:600;color:var(--on-green);background:var(--green);border:1px solid var(--green)}
+.btn-p:hover{background:var(--green-d);border-color:var(--green-d)}
+.btn-s{min-height:52px;padding:13px 20px;font-size:16px;font-weight:500;color:var(--ink);background:transparent;border:1px solid var(--ink)}
+.btn-s:hover,.btn-o:hover,.btn-sm:hover{background:var(--hover)}
+.btn-o{min-height:48px;padding:12px 20px;font-size:16px;font-weight:500;color:var(--ink);background:transparent;border:1px solid var(--ink)}
+.btn-sm{min-height:44px;padding:10px 18px;font-size:15px;font-weight:500;color:var(--ink);background:transparent;border:1px solid var(--ink)}
+.btn-link{min-height:44px;padding:10px 0;font-family:inherit;font-weight:500;color:var(--green);background:none;border:0;text-decoration:underline;text-underline-offset:4px;cursor:pointer;text-align:left}
+.btn-link:hover{color:var(--green-d)}
+
+/* entry */
+.entry{padding-top:clamp(36px,6cqi,72px)}
+.notice{margin:0 0 28px;padding:10px 0;border-top:1px solid var(--green);border-bottom:1px solid var(--green);color:var(--green);font-weight:600}
+.h1{margin:0;font-family:var(--serif);font-weight:500;letter-spacing:-.015em;text-wrap:balance}
+.entry .h1{max-width:820px;font-size:clamp(32px,4.6cqi,56px);line-height:1.08}
+.lede{margin:18px 0 0;max-width:640px;font-size:18px;color:var(--ink2);text-wrap:pretty}
+.entry-grid{display:flex;flex-wrap:wrap;gap:48px clamp(32px,6cqi,80px);margin-top:clamp(36px,5cqi,56px);padding-bottom:72px}
+.entry-form{flex:7 1 460px;min-width:0;display:flex;flex-direction:column;gap:30px}
+#venue{max-width:480px}
+#reviews{min-height:280px;padding:14px;font-size:15px;line-height:1.6}
+.counter{margin:8px 0 0;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.perm{display:flex;gap:14px;align-items:flex-start;min-height:44px;padding:10px 0;cursor:pointer;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.perm.bad{border-bottom:2px solid var(--ink)}
+.perm input{flex:none;width:22px;height:22px;margin:1px 0 0;accent-color:var(--green);cursor:pointer}
+.perm span{font-weight:500}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px}
+.entry .btn-link{font-size:15px}
+.how{flex:4 1 260px;min-width:0;border-top:1px solid var(--ink);padding-top:18px;align-self:flex-start}
+.h2s{margin:0 0 6px;font-family:var(--serif);font-weight:500;font-size:22px}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:grid;grid-template-columns:32px minmax(0,1fr);gap:8px;padding:14px 0;border-bottom:1px solid var(--rule)}
+.steps .n{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--green)}
+.steps .x{font-size:15px;text-wrap:pretty}
+.how h3{margin:26px 0 6px}
+.how .p{margin:0;font-size:15px}
+
+/* results */
+.results{padding-top:clamp(32px,5cqi,56px)}
+.results > .kicker{margin-bottom:12px}
+.results .h1{max-width:900px;font-size:clamp(30px,4.2cqi,50px);line-height:1.1;outline:none}
+.stats{display:flex;flex-wrap:wrap;gap:0 clamp(24px,5cqi,64px);margin:clamp(28px,4cqi,44px) 0 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
+.stats > div{flex:1 1 140px;display:flex;flex-direction:column-reverse;padding:18px 0 20px}
+.stats dt{margin-top:6px;font-size:15px;color:var(--ink2);max-width:16em}
+.stats dd{margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(52px,7cqi,88px);line-height:1;font-variant-numeric:tabular-nums lining-nums;letter-spacing:-.02em}
+.notes{margin:10px 0 0;display:flex;flex-wrap:wrap;gap:4px 20px;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.res-grid{display:flex;flex-wrap:wrap;align-items:flex-start;gap:40px clamp(32px,5cqi,64px);margin-top:clamp(40px,5cqi,60px)}
+.res-main{flex:7 1 440px;min-width:0}
+.res-main > .kicker{margin-bottom:14px}
+.ledger{list-style:none;margin:0;padding:0;border-bottom:1px solid var(--rule)}
+.ledger > li{display:grid;grid-template-columns:minmax(52px,auto) minmax(0,1fr);column-gap:clamp(16px,2.6cqi,32px);padding:26px 0 22px;border-top:1px solid var(--rule)}
+.ledger > li:first-child{border-top-color:var(--ink)}
+.rank{font-family:var(--serif);font-weight:400;font-size:clamp(40px,4.6cqi,58px);line-height:.95;font-variant-numeric:tabular-nums lining-nums;color:var(--ink)}
+.ledger > li.open .rank{color:var(--green)}
+.tname{margin:0;font-family:var(--serif);font-weight:500;font-size:clamp(22px,2.4cqi,28px);line-height:1.2}
+.countrow{display:flex;align-items:center;gap:14px;margin-top:10px}
+.countrow .c{flex:none;font-family:var(--mono);font-size:14px;font-weight:500}
+.bar{flex:1 1 auto;max-width:300px;min-width:48px;display:flex;align-items:center;height:4px}
+.bar .f{height:3px;background:var(--green)}
+.bar .r{height:1px;flex:1;background:var(--track)}
+.check{margin:16px 0 0;max-width:62ch;text-wrap:pretty}
+.check .kicker{display:block;margin-bottom:3px}
+.toggle{margin-top:6px;font-size:16px;font-weight:600;text-decoration-thickness:1px}
+.inline-ev{grid-column:1 / -1;margin-top:14px;padding-top:16px;border-top:2px solid var(--ink)}
+.ev-hint{margin:4px 0 0;font-size:14px;color:var(--muted)}
+.slips{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.slip{background:var(--slip);border:1px solid var(--slip-rule);border-radius:2px;padding:10px 16px 14px}
+.inline-ev .slip{padding:10px 14px 14px}
+.slip-h{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:8px;margin-bottom:10px;border-bottom:1px dashed var(--dash);font-family:var(--mono);font-size:13px}
+.slip-h .id{font-weight:600}
+.slip-h .lg{padding:0 6px;line-height:20px;font-size:12px;border:1px solid var(--muted);border-radius:2px;color:var(--ink2)}
+.slip-t{margin:0;font-size:16px;line-height:1.6;overflow-wrap:anywhere}
+.slip-t mark{background:rgba(185,130,47,.2);color:inherit;border-bottom:2px solid var(--ochre);padding:0 1px}
+.slip-k{margin:10px 0 0;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.others{margin:14px 0 0;font-size:14px;color:var(--ink2)}
+.others b{font-weight:600}
+.others .mono{font-size:13px}
+.panel{flex:5 1 320px;min-width:0;position:sticky;top:24px;border-top:2px solid var(--ink);padding-top:16px}
+.panel-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-top:6px}
+.panel-h h3{margin:0;font-family:var(--serif);font-weight:500;font-size:24px;line-height:1.2}
+.panel-h h3 span{display:block;margin-top:4px;font-family:var(--mono);font-size:13px;font-weight:400;color:var(--muted)}
+.panel-x{flex:none;min-height:44px;padding:8px 12px;font-size:14px;font-weight:500;color:var(--ink);background:transparent;border:1px solid var(--field);border-radius:3px;cursor:pointer}
+.panel-x:hover{background:var(--hover)}
+.panel .ev-hint{margin-top:8px}
+.panel .slips{margin-top:16px}
+.panel-empty{margin:10px 0 0;max-width:34em;font-size:15px;color:var(--ink2)}
+.empty{margin-top:clamp(40px,5cqi,60px);padding-top:24px;border-top:2px solid var(--ink);max-width:760px}
+.empty h2{margin:0;font-family:var(--serif);font-weight:500;font-size:clamp(24px,3cqi,32px);line-height:1.2}
+.empty .body{margin:12px 0 0;font-size:18px;text-wrap:pretty}
+.empty .un{margin:14px 0 0;font-family:var(--mono);font-size:14px}
+.empty .others{margin-top:6px}
+.empty .btn-o{margin-top:20px}
+.empty .slips{margin-top:20px}
+
+/* action + feedback */
+.band{padding-top:22px;border-top:1px solid var(--ink);display:flex;flex-wrap:wrap;gap:20px clamp(24px,5cqi,64px)}
+.band-l{flex:3 1 220px;min-width:0}
+.band-l .kicker{margin-bottom:8px}
+.band-l h2{margin:0;font-family:var(--serif);font-weight:500;line-height:1.2;text-wrap:balance}
+.act{margin-top:72px}
+.act .band-l h2{font-size:clamp(24px,2.8cqi,30px)}
+.band-l .note{margin:10px 0 0;font-size:15px;color:var(--ink2)}
+.band-r{flex:8 1 420px;min-width:0}
+.act-form{display:flex;flex-direction:column;gap:26px}
+fieldset{margin:0;padding:0;border:0;min-width:0;outline:none}
+legend{padding:0;margin:0 0 8px;font-weight:600}
+.opts{border-bottom:1px solid var(--rule)}
+.opt{display:grid;grid-template-columns:24px minmax(0,1fr);gap:14px;padding:14px 0;min-height:44px;border-top:1px solid var(--rule);cursor:pointer}
+.opt input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--green);cursor:pointer}
+.opt b{display:block;font-weight:600}
+.opt i{display:block;font-style:normal;margin-top:2px;color:var(--ink2);text-wrap:pretty}
+.pair{display:flex;flex-wrap:wrap;gap:22px 24px}
+.pair > div:first-child{flex:1 1 240px;min-width:0}
+.pair > div:last-child{flex:1 1 200px;min-width:0}
+.pair .help{margin-bottom:8px}
+#date{font-family:var(--mono)}
+.saved{background:var(--slip);border:1px solid var(--slip-rule);border-top:3px solid var(--green);border-radius:2px;padding:16px 20px 20px}
+.saved .head{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.saved .head span:last-child{font-weight:600;color:var(--green)}
+.saved .nm{margin:14px 0 0;font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.25}
+.saved .ck{margin:6px 0 0;max-width:62ch}
+.saved dl{display:grid;grid-template-columns:minmax(0,max-content) minmax(0,1fr);gap:6px 20px;margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--dash);font-size:15px}
+.saved dt{color:var(--muted)}
+.saved dd{margin:0;font-weight:500}
+.saved .btn-sm{margin-top:16px}
+.fb{margin-top:64px}
+.fb .band-l h2{font-size:clamp(22px,2.6cqi,28px);line-height:1.25}
+.fb .band-r{display:flex;flex-direction:column;gap:24px}
+.rates{display:flex;flex-wrap:wrap;gap:8px}
+.rates button{width:60px;height:56px;font-family:var(--mono);font-size:20px;font-weight:600;border-radius:3px;cursor:pointer;background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.rates button:hover{background:var(--hover)}
+.rates button[aria-pressed="true"]{background:var(--green);color:var(--on-green);border-color:var(--green)}
+.scale{display:flex;justify-content:space-between;gap:12px;max-width:332px;margin-top:8px;font-size:13px;color:var(--muted)}
+.scale span:last-child{text-align:right}
+#comment{min-height:96px;padding:12px 14px}
+.fb .help{margin-bottom:8px}
+.status{display:flex;flex-direction:column;gap:8px}
+.status .okline span:last-child{font-weight:500;overflow-wrap:anywhere}
+.tail{margin-top:64px;padding:20px 0;border-top:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:12px}
+#resetBtn[data-armed="true"]{background:var(--ink);color:var(--paper);font-weight:600}
+#resetBtn[data-armed="true"]:hover{background:var(--ink2)}
+.tail .hint{align-self:center;font-size:14px;color:var(--ink2)}
+.ftr{border-top:1px solid var(--rule);margin-top:24px}
+.ftr p{margin:0 auto;padding-top:18px;padding-bottom:28px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="app" class="riq"></div>
+<script>
+(function () {
+  'use strict';
+
+  /* ---------------------------------------------------------------- data */
+  var TOPICS = [
+    { id: 'wait', kw: ['долго', 'ждали', 'ждать', 'ждём', 'ожидан', 'медленн', 'минут', 'ұзақ күт', 'күттік', 'баяу'],
+      en: { name: 'Waiting time', check: 'For three busy shifts, record the time from order to serving at 10 tables.' },
+      kk: { name: 'Күту уақыты', check: 'Үш қарбалас ауысымда 10 үстел бойынша тапсырыс пен тағам берілген уақыт арасын жазып отырыңыз.' } },
+    { id: 'staff', kw: ['официант', 'груб', 'хамил', 'хамств', 'невнимател', 'персонал', 'даяшы', 'дөрекі', 'көңіл бөлме', 'қызметкер'],
+      en: { name: 'Staff interaction', check: 'Watch how guests are greeted and served during one peak hour, then go through what you saw with the team.' },
+      kk: { name: 'Қызметкерлердің қарым-қатынасы', check: 'Бір қарбалас сағатта қонақтарды қарсы алу мен қызмет көрсетуді бақылап, көргеніңізді командамен талқылаңыз.' } },
+    { id: 'temp', kw: ['остыв', 'остыл', 'холодн', 'еле тёпл', 'чуть тёпл', 'едва тёпл', 'суық', 'суып'],
+      en: { name: 'Food temperature', check: 'Check the temperature of the five most-ordered hot dishes at the pass and again at the table.' },
+      kk: { name: 'Тағам температурасы', check: 'Ең көп тапсырыс берілетін бес ыстық тағамның температурасын беру терезесінде және үстелде тексеріңіз.' } },
+    { id: 'price', kw: ['дорого', 'цены', 'цена', 'ценник', 'қымбат', 'бағасы'],
+      en: { name: 'Prices', check: 'Compare prices of your ten best-selling items with two nearby cafés.' },
+      kk: { name: 'Бағалар', check: 'Ең көп сатылатын он тағамның бағасын жақын маңдағы екі кафемен салыстырыңыз.' } },
+    { id: 'clean', kw: ['грязн', 'липк', 'не убран', 'лас болды', 'таза емес'],
+      en: { name: 'Cleanliness', check: 'For one week, walk the hall and restrooms with a checklist at opening, midday and close.' },
+      kk: { name: 'Тазалық', check: 'Бір апта бойы ашылғанда, түсте және жабылғанда зал мен дәретхананы тізім бойынша тексеріңіз.' } },
+    { id: 'noise', kw: ['громк', 'шумно', 'шум', 'шулы'],
+      en: { name: 'Noise level', check: 'In the evening, check the music volume at three tables and agree on a fixed level.' },
+      kk: { name: 'Шу деңгейі', check: 'Кешкі уақытта үш үстел жанында музыка дыбысын тексеріп, тұрақты деңгейді келісіңіз.' } }
+  ];
+
+  var I18N = {
+    en: {
+      tagline: 'Review priorities for independent cafés', langLabel: 'Language', draftNote: '',
+      entryKicker: 'New session', headline: 'What should your café investigate first?',
+      lede: 'Paste recent reviews from 2GIS or Google Maps. ReviewIQ groups them into recurring topics and shows the reviews behind each one.',
+      venueLabel: 'Venue name', venueHelp: 'Shown in the report title.', venuePh: 'e.g. Baqsha Café, Astana',
+      reviewsLabel: 'Paste reviews, one per line', reviewsHelp: 'Russian, Kazakh or mixed. 3–200 unique reviews, up to 4,000 characters each.',
+      reviewsPh: 'Ждали заказ 40 минут…\nТағам дәмді, бірақ…',
+      counter: '{lines} lines · {u} unique · {d} duplicates', counterEmpty: 'No reviews yet',
+      permLabel: 'I have permission to use these reviews and removed personal details.',
+      submit: 'Find recurring topics', demo: 'Load demo reviews', demoEmpty: 'Load a demo set with no repeats',
+      errTag: 'Error', hintTag: 'Missing',
+      errVenue: 'Enter the venue name. It appears in the report title.',
+      errFew: 'Add at least 3 unique reviews. Right now there are {u}.',
+      errMany: 'Use no more than 200 unique reviews. Right now there are {u}. Remove the oldest ones.',
+      errLong: 'Line {line} is longer than 4,000 characters. Shorten it or split it into two lines.',
+      errPerm: 'Tick this box to continue. Use only reviews you are allowed to use, with names and phone numbers removed.',
+      howTitle: 'How it works',
+      step1: 'Paste reviews you collected from 2GIS or Google Maps.',
+      step2: 'Each review is checked against a dictionary of café topics in Russian and Kazakh. A topic is listed only if it appears in at least two reviews.',
+      step3: 'Read the source reviews, choose one check, and set a person and a date.',
+      limitsTitle: 'Limits', limits: 'This prototype uses a keyword dictionary, not an AI model. Nothing is sent to a server.',
+      limits2: 'It can miss sarcasm or unusual wording. Always read the source reviews.',
+      pilotTitle: 'Pilot', pilot: '7-day trial, then optional 7,000 KZT / month.',
+      resultsKicker: 'Report · {date}', resultsTitle: '{venue} — review priorities',
+      sumUnique: 'unique reviews', sumTopics: 'recurring topics', sumUnmatched: 'reviews without a match',
+      dupes0: 'No duplicates found.', dupes1: '1 exact duplicate removed.', dupesN: '{n} exact duplicates removed.',
+      methodNote: 'Counted with a keyword dictionary, threshold: 2 reviews.',
+      topicsTitle: 'Topics, in order of review count',
+      countOf: '{c} of {n} reviews', rankSr: 'Rank {n}.',
+      suggested: 'Suggested check', showSources: 'Show source reviews', hideSources: 'Hide source reviews',
+      others: 'Other matches, not ranked:',
+      evidenceTitle: 'Source reviews', evidenceHint: 'Matched words are underlined. Text is shown exactly as pasted.',
+      evidenceEmpty: 'Choose “Show source reviews” under a topic to read the reviews behind it.',
+      evidenceFor: 'Source reviews: {topic}',
+      matched: 'Matched', noMatch: 'No keyword matched', closePanel: 'Close',
+      lang_ru: 'RU', lang_kz: 'KZ', lang_mixed: 'Mixed', lang_other: 'Other',
+      langAria_ru: 'Language: Russian', langAria_kz: 'Language: Kazakh', langAria_mixed: 'Language: mixed Russian and Kazakh', langAria_other: 'Language: not detected',
+      emptyTitle: 'No recurring topic found',
+      emptyBody: 'No topic repeats in at least two reviews. This does not mean there are no problems — read the reviews manually.',
+      emptyUnmatched: 'Reviews without a dictionary match: {n} of {t}.',
+      showAll: 'Read all reviews', hideAll: 'Hide reviews',
+      actionKicker: 'Next action', actionTitle: 'Choose one check to do next',
+      actionNote: 'One check at a time. You can change it later.', actionChoose: 'Suggested checks',
+      personLabel: 'Person responsible', personPh: 'e.g. Aigerim, shift manager', optional: 'Optional',
+      dateLabel: 'Review date', dateHelp: 'When you will look at the result.',
+      saveAction: 'Save action', errNoTopic: 'Choose one of the checks above.', errNoDate: 'Pick a review date.',
+      savedTag: 'Saved', actionSavedMsg: 'Action saved for this session.', noPerson: 'Not assigned', editAction: 'Change action',
+      feedbackKicker: 'Feedback', feedbackQ: 'How useful was this for choosing what to investigate?',
+      scaleLow: '1 — not useful', scaleHigh: '5 — very useful', rateAria: '{n} out of 5',
+      commentLabel: 'Comment', commentPh: 'What was missing or unclear?',
+      saveFeedback: 'Save feedback', exportBtn: 'Export session (JSON)', errNoRating: 'Choose a number from 1 to 5.',
+      fbSaved: 'Feedback saved. It will be included in the export.',
+      exportedTag: 'Exported', exported: 'Session exported as {file}. The file is saved on this device only.',
+      editInput: 'Edit input', reset: 'Reset session', resetArm: 'Confirm reset', resetHint: 'This clears all input, results and feedback.',
+      resetDone: 'Session cleared.', footer: 'ReviewIQ prototype. Reviews stay in this browser tab.'
+    },
+    kk: {
+      tagline: 'Тәуелсіз кафелерге арналған пікірлер талдауы', langLabel: 'Тіл',
+      draftNote: 'Қазақша мәтін — алдын ала нұсқа. Ана тілінде сөйлейтін редактор тексеруі қажет.',
+      entryKicker: 'Жаңа сессия', headline: 'Кафеңізде алдымен нені тексеру керек?',
+      lede: '2GIS немесе Google Maps-тағы соңғы пікірлерді қойыңыз. ReviewIQ оларды қайталанатын тақырыптарға топтап, әр тақырыптың артындағы пікірлерді көрсетеді.',
+      venueLabel: 'Мекеме атауы', venueHelp: 'Есеп тақырыбында көрсетіледі.', venuePh: 'мысалы, Baqsha Café, Астана',
+      reviewsLabel: 'Пікірлерді қойыңыз, әр жолға біреуден', reviewsHelp: 'Орыс, қазақ немесе аралас тілде. 3–200 бірегей пікір, әрқайсысы 4 000 таңбаға дейін.',
+      reviewsPh: 'Ждали заказ 40 минут…\nТағам дәмді, бірақ…',
+      counter: '{lines} жол · {u} бірегей · {d} қайталама', counterEmpty: 'Әзірге пікір жоқ',
+      permLabel: 'Бұл пікірлерді пайдалануға рұқсатым бар және жеке деректерді алып тастадым.',
+      submit: 'Қайталанатын тақырыптарды табу', demo: 'Демо пікірлерді жүктеу', demoEmpty: 'Қайталанбайтын демо жинақты жүктеу',
+      errTag: 'Қате', hintTag: 'Толтырылмаған',
+      errVenue: 'Мекеме атауын енгізіңіз. Ол есеп тақырыбында көрсетіледі.',
+      errFew: 'Кемінде 3 бірегей пікір қосыңыз. Қазір: {u}.',
+      errMany: 'Ең көбі 200 бірегей пікір болуы керек. Қазір: {u}. Ең ескілерін алып тастаңыз.',
+      errLong: '{line}-жол 4 000 таңбадан ұзын. Оны қысқартыңыз немесе екі жолға бөліңіз.',
+      errPerm: 'Жалғастыру үшін белгілеңіз. Тек рұқсат етілген пікірлерді, аты-жөні мен телефон нөмірлерін алып тастап пайдаланыңыз.',
+      howTitle: 'Қалай жұмыс істейді',
+      step1: '2GIS немесе Google Maps-тан жинаған пікірлерді қойыңыз.',
+      step2: 'Әр пікір орыс және қазақ тілдеріндегі кафе тақырыптарының сөздігімен салыстырылады. Тақырып кемінде екі пікірде кездессе ғана көрсетіледі.',
+      step3: 'Дереккөз пікірлерді оқып, бір тексеруді таңдаңыз, жауапты адам мен күнді белгілеңіз.',
+      limitsTitle: 'Шектеулер', limits: 'Бұл прототип жасанды интеллект моделін емес, кілт сөздер сөздігін пайдаланады. Ешқандай дерек серверге жіберілмейді.',
+      limits2: 'Ол кекесінді немесе әдеттен тыс сөздерді өткізіп алуы мүмкін. Дереккөз пікірлерді әрқашан оқыңыз.',
+      pilotTitle: 'Пилот', pilot: '7 күндік сынақ, кейін қалауыңыз бойынша айына 7 000 теңге.',
+      resultsKicker: 'Есеп · {date}', resultsTitle: '{venue} — пікірлер бойынша басымдықтар',
+      sumUnique: 'бірегей пікір', sumTopics: 'қайталанатын тақырып', sumUnmatched: 'сәйкестігі жоқ пікір',
+      dupes0: 'Қайталамалар табылмады.', dupes1: '1 нақты қайталама алынып тасталды.', dupesN: '{n} нақты қайталама алынып тасталды.',
+      methodNote: 'Кілт сөздер сөздігі арқылы есептелді, шегі: 2 пікір.',
+      topicsTitle: 'Тақырыптар, пікір саны бойынша',
+      countOf: '{c} / {n} пікір', rankSr: '{n}-орын.',
+      suggested: 'Ұсынылатын тексеру', showSources: 'Дереккөз пікірлерді көрсету', hideSources: 'Дереккөз пікірлерді жасыру',
+      others: 'Рейтингке кірмеген басқа сәйкестіктер:',
+      evidenceTitle: 'Дереккөз пікірлер', evidenceHint: 'Сәйкес келген сөздердің асты сызылған. Мәтін қойылған күйінде көрсетіледі.',
+      evidenceEmpty: 'Тақырыптың астындағы «Дереккөз пікірлерді көрсету» батырмасын басып, пікірлерді оқыңыз.',
+      evidenceFor: 'Дереккөз пікірлер: {topic}',
+      matched: 'Сәйкестік', noMatch: 'Кілт сөз табылмады', closePanel: 'Жабу',
+      lang_ru: 'RU', lang_kz: 'KZ', lang_mixed: 'Аралас', lang_other: 'Басқа',
+      langAria_ru: 'Тілі: орысша', langAria_kz: 'Тілі: қазақша', langAria_mixed: 'Тілі: орысша мен қазақша аралас', langAria_other: 'Тілі анықталмады',
+      emptyTitle: 'Қайталанатын тақырып табылмады',
+      emptyBody: 'Ешбір тақырып кемінде екі пікірде қайталанбайды. Бұл мәселе жоқ дегенді білдірмейді — пікірлерді өзіңіз оқып шығыңыз.',
+      emptyUnmatched: 'Сөздікке сәйкес келмеген пікірлер: {n} / {t}.',
+      showAll: 'Барлық пікірлерді оқу', hideAll: 'Пікірлерді жасыру',
+      actionKicker: 'Келесі әрекет', actionTitle: 'Келесі тексеруді таңдаңыз',
+      actionNote: 'Бір уақытта бір тексеру. Кейін өзгертуге болады.', actionChoose: 'Ұсынылған тексерулер',
+      personLabel: 'Жауапты адам', personPh: 'мысалы, Айгерім, ауысым менеджері', optional: 'Міндетті емес',
+      dateLabel: 'Қарау күні', dateHelp: 'Нәтижені қашан қарайтыныңыз.',
+      saveAction: 'Әрекетті сақтау', errNoTopic: 'Жоғарыдағы тексерулердің бірін таңдаңыз.', errNoDate: 'Қарау күнін таңдаңыз.',
+      savedTag: 'Сақталды', actionSavedMsg: 'Әрекет осы сессияда сақталды.', noPerson: 'Белгіленбеген', editAction: 'Әрекетті өзгерту',
+      feedbackKicker: 'Кері байланыс', feedbackQ: 'Нені тексеру керектігін таңдауға бұл қаншалықты пайдалы болды?',
+      scaleLow: '1 — пайдасыз', scaleHigh: '5 — өте пайдалы', rateAria: '5-тен {n}',
+      commentLabel: 'Түсініктеме', commentPh: 'Не жетіспеді немесе не түсініксіз болды?',
+      saveFeedback: 'Кері байланысты сақтау', exportBtn: 'Сессияны экспорттау (JSON)', errNoRating: '1-ден 5-ке дейінгі санды таңдаңыз.',
+      fbSaved: 'Кері байланыс сақталды. Ол экспортқа қосылады.',
+      exportedTag: 'Экспортталды', exported: 'Сессия {file} файлына экспортталды. Файл тек осы құрылғыда сақталды.',
+      editInput: 'Деректерді өңдеу', reset: 'Сессияны тазалау', resetArm: 'Тазалауды растау', resetHint: 'Барлық деректер, нәтижелер мен кері байланыс өшіріледі.',
+      resetDone: 'Сессия тазаланды.', footer: 'ReviewIQ прототипі. Пікірлер осы браузер қойындысында қалады.'
+    }
+  };
+
+  var DEMO = { venue: 'Baqsha Café', raw: [
+    'Ждали заказ почти 40 минут, хотя зал был полупустой.',
+    'Очень вкусный лагман, порции большие. Вернёмся.',
+    'Официант был грубым, когда мы попросили поменять столик.',
+    'Тағамды ұзақ күттік, бірақ дәмі жақсы болды.',
+    'Суп принесли уже остывший, пришлось просить подогреть.',
+    'Кофе отличный, бариста знает своё дело.',
+    'Ждали заказ почти 40 минут, хотя зал был полупустой.',
+    'Даяшы бізге мүлдем көңіл бөлмеді, үш рет шақырдық.',
+    'Очень дорого для такого района, капучино 1800 тенге.',
+    'Палау суық болып келді, ал шай керемет.',
+    'Заказ ждали долго, бірақ қызмет жақсы.',
+    'Официант был грубым, когда мы попросили поменять столик.',
+    'Столы липкие, в туалете не было бумаги.',
+    'Администратор нахамила, когда мы спросили про бронь. Өте ұят.'
+  ].join('\n') };
+
+  var DEMO_EMPTY = { venue: 'Baqsha Café', raw: [
+    'Очень уютно, приходим сюда всей семьёй.',
+    'Бағасы қымбат, бірақ кофесі дәмді.',
+    'Ждали минут двадцать, в остальном всё хорошо.',
+    'Тамақ дәмді, қызмет жақсы.',
+    'Музыка слишком громкая, трудно разговаривать.',
+    'Столик был липкий, но десерты отличные.'
+  ].join('\n') };
+
+  var RU_WORDS = new Set(['и', 'в', 'на', 'не', 'но', 'а', 'что', 'это', 'как', 'все', 'всё', 'уже', 'для', 'мы', 'нам', 'нас', 'я', 'очень', 'было', 'был', 'была', 'были', 'хотя', 'когда', 'почти', 'заказ', 'ждали', 'долго', 'про', 'с', 'за', 'по', 'из', 'так', 'такого', 'еще', 'ещё', 'просить', 'пришлось', 'сюда', 'слишком']);
+
+  /* ------------------------------------------------------------- analysis */
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (m, k) { return v && v[k] !== undefined ? v[k] : m; }); }
+
+  function parse(raw) {
+    var uniq = [], seen = new Set(), lines = 0, dupes = 0, longLine = 0;
+    (raw || '').split(/\r?\n/).forEach(function (l, i) {
+      l = l.trim(); if (!l) return; lines++;
+      if (l.length > 4000 && !longLine) longLine = i + 1;
+      var k = l.replace(/\s+/g, ' ');
+      if (seen.has(k)) dupes++; else { seen.add(k); uniq.push(l); }
+    });
+    return { lines: lines, uniq: uniq, dupes: dupes, longLine: longLine };
+  }
+
+  function detectLang(low) {
+    var kz = /[әғқңөұүһі]/.test(low);
+    var toks = low.split(/[^a-zа-яёәғқңөұүһі]+/).filter(Boolean);
+    var ru = toks.some(function (w) { return RU_WORDS.has(w) || /[щъё]/.test(w) || /(ться|ется|ого|ный|ные)$/.test(w); });
+    if (kz && ru) return 'mixed';
+    if (kz) return 'kz';
+    if (/[а-яё]/.test(low)) return 'ru';
+    return 'other';
+  }
+
+  function analyze(uniq, dupes, lines) {
+    var isL = function (ch) { return !!ch && /\p{L}/u.test(ch); };
+    var pad = uniq.length > 99 ? 3 : 2;
+    var reviews = uniq.map(function (text, i) {
+      var low = text.toLowerCase(), hits = {};
+      TOPICS.forEach(function (tp) {
+        var found = [];
+        tp.kw.forEach(function (k) {
+          var idx = low.indexOf(k);
+          while (idx !== -1) {
+            var s = idx, e = idx + k.length;
+            while (s > 0 && isL(text[s - 1])) s--;
+            while (e < text.length && isL(text[e])) e++;
+            found.push({ s: s, e: e }); idx = low.indexOf(k, idx + k.length);
+          }
+        });
+        if (found.length) hits[tp.id] = found;
+      });
+      return { id: 'R' + String(i + 1).padStart(pad, '0'), text: text, lang: detectLang(low), hits: hits };
+    });
+    var counts = TOPICS.map(function (tp, order) {
+      return { id: tp.id, order: order, ids: reviews.filter(function (r) { return r.hits[tp.id]; }).map(function (r) { return r.id; }) };
+    }).filter(function (x) { return x.ids.length; });
+    counts.sort(function (a, b) { return b.ids.length - a.ids.length || a.order - b.order; });
+    var recurring = counts.filter(function (c) { return c.ids.length >= 2; });
+    var topics = recurring.slice(0, 3);
+    return { reviews: reviews, topics: topics, recurringTotal: recurring.length,
+      others: counts.filter(function (c) { return topics.indexOf(c) === -1; }),
+      unmatched: reviews.filter(function (r) { return !Object.keys(r.hits).length; }).length,
+      total: reviews.length, dupes: dupes, lines: lines };
+  }
+
+  function segs(text, ranges) {
+    var rs = ranges.slice().sort(function (a, b) { return a.s - b.s; }), m = [];
+    rs.forEach(function (r) { var l = m[m.length - 1]; if (l && r.s <= l.e) l.e = Math.max(l.e, r.e); else m.push({ s: r.s, e: r.e }); });
+    var out = [], p = 0;
+    m.forEach(function (r) { if (r.s > p) out.push({ text: text.slice(p, r.s), hl: false }); out.push({ text: text.slice(r.s, r.e), hl: true }); p = r.e; });
+    if (p < text.length) out.push({ text: text.slice(p), hl: false });
+    return out;
+  }
+
+  function topicDef(id) { for (var i = 0; i < TOPICS.length; i++) if (TOPICS[i].id === id) return TOPICS[i]; return null; }
+
+  /* ---------------------------------------------------------------- state */
+  function blank() {
+    return { screen: 'entry', venue: '', raw: '', perm: false, errors: {}, result: null, openTopic: null, showAll: false,
+      act: { topic: null, person: '', date: '' }, actErr: {}, actSaved: null,
+      fb: { rating: 0, comment: '' }, fbErr: false, fbSaved: false, fbData: null, exported: null, resetArmed: false, notice: null };
+  }
+
+  var params = new URLSearchParams(location.search);
+  var initialLang = params.get('lang') === 'kk' ? 'kk' : (params.get('lang') === 'en' ? 'en' : null);
+  if (!initialLang) { try { initialLang = localStorage.getItem('riq-lang'); } catch (e) {} }
+  if (initialLang !== 'kk') initialLang = 'en';
+
+  var state = Object.assign(blank(), { lang: initialLang, narrow: false });
+  var flash = {};          // one-shot animation keys for the next render
+  var resetTimer = null;
+  var root = document.getElementById('app');
+
+  function set(patch, opts) {
+    Object.assign(state, patch);
+    render(opts || {});
+  }
+
+  /* ----------------------------------------------------------- utilities */
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
+  }
+  function t() { return I18N[state.lang]; }
+  function tf(k, v) { return fmt(t()[k], v || {}); }
+  /** element bound to a translation key */
+  function tx(tag, key, attrs) { return '<' + tag + ' data-i18n="' + key + '"' + (attrs ? ' ' + attrs : '') + '>' + esc(t()[key]) + '</' + tag + '>'; }
+  function anim(k, cls) { return flash[k] ? ' ' + (cls || 'anim') : ''; }
+  function localIso(offsetDays) {
+    var x = new Date(); x.setDate(x.getDate() + (offsetDays || 0));
+    return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0');
+  }
+  var KK_MONTHS = ['қаңтар', 'ақпан', 'наурыз', 'сәуір', 'мамыр', 'маусым', 'шілде', 'тамыз', 'қыркүйек', 'қазан', 'қараша', 'желтоқсан'];
+  function fmtDate(iso) {
+    if (!iso) return '';
+    var p = iso.split('-').map(Number);
+    // Browsers often lack full kk-KZ month data (Chromium prints "2026 M11 15"), so Kazakh is formatted by hand.
+    if (state.lang === 'kk') return p[0] + ' жылғы ' + p[2] + ' ' + KK_MONTHS[p[1] - 1];
+    try { return new Date(p[0], p[1] - 1, p[2]).toLocaleDateString(state.lang === 'kk' ? 'kk-KZ' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); }
+    catch (e) { return iso; }
+  }
+  function msg(id, tagKey, text) {
+    return '<p id="' + id + '" role="alert" class="msg"><span class="tag">' + esc(t()[tagKey]) + '</span><span>' + esc(text) + '</span></p>';
+  }
+  function scrollToEl(el) { if (el) window.scrollTo(0, Math.max(0, window.scrollY + el.getBoundingClientRect().top - 16)); }
+  function focusLater(id) { setTimeout(function () { var el = document.getElementById(id); if (el) el.focus(); }, 0); }
+
+  /* ------------------------------------------------------------ templates */
+  function headerHTML() {
+    var L = state.lang;
+    var langs = [{ code: 'en', label: 'EN', name: 'English' }, { code: 'kk', label: 'ҚАЗ', name: 'Қазақша' }];
+    return '<header class="hdr"><div class="wrap">' +
+      '<div class="brand"><span class="wordmark">ReviewIQ</span>' + tx('span', 'tagline', 'class="tagline"') + '</div>' +
+      '<div class="langsw" role="group" aria-label="' + esc(t().langLabel) + '">' +
+        tx('span', 'langLabel', 'class="langsw-l" aria-hidden="true"') +
+        '<div class="seg">' + langs.map(function (x) {
+          return '<button type="button" id="lang-' + x.code + '" lang="' + x.code + '" aria-pressed="' + (L === x.code) + '" aria-label="' + x.name + '" data-action="lang" data-v="' + x.code + '">' + x.label + '</button>';
+        }).join('') + '</div>' +
+      '</div></div></header>' +
+      (L === 'kk' ? '<div class="draft">' + tx('p', 'draftNote', 'class="wrap"') + '</div>' : '');
+  }
+
+  function entryHTML() {
+    var s = state, e = s.errors, T = t(), p = parse(s.raw);
+    var errVenue = e.venue ? T.errVenue : '';
+    var errReviews = e.reviews ? (e.reviews.code === 'few' ? tf('errFew', { u: e.reviews.u }) : e.reviews.code === 'many' ? tf('errMany', { u: e.reviews.u }) : tf('errLong', { line: e.reviews.line })) : '';
+    var errPerm = e.perm ? T.errPerm : '';
+    var counter = p.lines ? tf('counter', { lines: p.lines, u: p.uniq.length, d: p.dupes }) : T.counterEmpty;
+    return '<section class="entry" aria-labelledby="h1">' +
+      (s.notice === 'reset' ? tx('p', 'resetDone', 'class="notice" role="status"') : '') +
+      tx('p', 'entryKicker', 'class="kicker" style="margin-bottom:14px"') +
+      tx('h1', 'headline', 'id="h1" class="h1"') +
+      tx('p', 'lede', 'class="lede"') +
+      '<div class="entry-grid">' +
+        '<form id="entryForm" class="entry-form" novalidate>' +
+          '<div>' +
+            tx('label', 'venueLabel', 'for="venue" class="lbl"') +
+            tx('p', 'venueHelp', 'id="venueHelp" class="help"') +
+            '<input id="venue" class="input" type="text" autocomplete="organization" value="' + esc(s.venue) + '" placeholder="' + esc(T.venuePh) + '" data-i18n-placeholder="venuePh" aria-invalid="' + !!errVenue + '" aria-describedby="venueHelp' + (errVenue ? ' venueErr' : '') + '">' +
+            (errVenue ? msg('venueErr', 'errTag', errVenue) : '') +
+          '</div>' +
+          '<div>' +
+            tx('label', 'reviewsLabel', 'for="reviews" class="lbl"') +
+            tx('p', 'reviewsHelp', 'id="reviewsHelp" class="help"') +
+            '<textarea id="reviews" class="textarea" rows="12" spellcheck="false" placeholder="' + esc(T.reviewsPh) + '" data-i18n-placeholder="reviewsPh" aria-invalid="' + !!errReviews + '" aria-describedby="reviewsHelp' + (errReviews ? ' reviewsErr' : '') + '">' + esc(s.raw) + '</textarea>' +
+            '<p id="counter" class="counter" aria-live="polite">' + esc(counter) + '</p>' +
+            (errReviews ? msg('reviewsErr', 'errTag', errReviews) : '') +
+          '</div>' +
+          '<div>' +
+            '<label for="perm" class="perm' + (errPerm ? ' bad' : '') + '">' +
+              '<input id="perm" type="checkbox"' + (s.perm ? ' checked' : '') + ' aria-invalid="' + !!errPerm + '"' + (errPerm ? ' aria-describedby="permErr"' : '') + '>' +
+              tx('span', 'permLabel') +
+            '</label>' +
+            (errPerm ? msg('permErr', 'errTag', errPerm) : '') +
+          '</div>' +
+          '<div class="actions">' +
+            tx('button', 'submit', 'type="submit" class="btn btn-p"') +
+            tx('button', 'demo', 'type="button" class="btn btn-s" data-action="demo"') +
+            tx('button', 'demoEmpty', 'type="button" class="btn-link" data-action="demoEmpty"') +
+          '</div>' +
+        '</form>' +
+        '<aside class="how" aria-labelledby="howTitle">' +
+          tx('h2', 'howTitle', 'id="howTitle" class="h2s"') +
+          '<ol class="steps">' + ['step1', 'step2', 'step3'].map(function (k, i) {
+            return '<li><span class="n" aria-hidden="true">0' + (i + 1) + '</span>' + tx('span', k, 'class="x"') + '</li>';
+          }).join('') + '</ol>' +
+          tx('h3', 'limitsTitle', 'class="kicker b"') +
+          tx('p', 'limits', 'class="p" style="font-weight:500"') +
+          tx('p', 'limits2', 'class="p" style="margin-top:8px;color:var(--ink2)"') +
+          tx('h3', 'pilotTitle', 'class="kicker b"') +
+          tx('p', 'pilot', 'class="p"') +
+        '</aside>' +
+      '</div></section>';
+  }
+
+  function slip(r, topicIds) {
+    var T = t(), ranges = [], kws = [];
+    topicIds.forEach(function (id) {
+      (r.hits[id] || []).forEach(function (h) { ranges.push(h); var w = r.text.slice(h.s, h.e); if (kws.indexOf(w) === -1) kws.push(w); });
+    });
+    var body = segs(r.text, ranges).map(function (sg) { return sg.hl ? '<mark>' + esc(sg.text) + '</mark>' : esc(sg.text); }).join('');
+    return '<li class="slip">' +
+      '<div class="slip-h"><span class="id">' + r.id + '</span><span class="lg" aria-label="' + esc(T['langAria_' + r.lang]) + '">' + esc(T['lang_' + r.lang]) + '</span></div>' +
+      '<p class="slip-t">' + body + '</p>' +
+      '<p class="slip-k">' + esc(kws.length ? T.matched + ': ' + kws.join(', ') : T.noMatch) + '</p>' +
+    '</li>';
+  }
+
+  function evidenceList(tp) {
+    var r = state.result;
+    return '<ul class="slips">' + tp.ids.map(function (id) {
+      var rev = r.reviews.filter(function (x) { return x.id === id; })[0];
+      return slip(rev, [tp.id]);
+    }).join('') + '</ul>';
+  }
+
+  function othersHTML() {
+    var r = state.result, L = state.lang;
+    if (!r.others.length) return '';
+    return '<p class="others">' + tx('b', 'others') + ' <span class="mono">' +
+      esc(r.others.map(function (o) { return topicDef(o.id)[L].name + ' · ' + o.ids.join(', '); }).join(';  ')) + '</span></p>';
+  }
+
+  function resultsHTML() {
+    var s = state, r = s.result, L = s.lang, T = t();
+    var dupesText = r.dupes === 0 ? T.dupes0 : r.dupes === 1 ? T.dupes1 : tf('dupesN', { n: r.dupes });
+    var stats = [[r.total, 'sumUnique'], [r.recurringTotal, 'sumTopics'], [r.unmatched, 'sumUnmatched']];
+    var h = '<section class="results" aria-labelledby="resTitle">' +
+      '<p class="kicker">' + esc(tf('resultsKicker', { date: fmtDate(localIso(0)) })) + '</p>' +
+      '<h1 id="resTitle" class="h1" tabindex="-1">' + esc(tf('resultsTitle', { venue: s.venue.trim() })) + '</h1>' +
+      '<dl class="stats">' + stats.map(function (x) { return '<div>' + tx('dt', x[1]) + '<dd>' + x[0] + '</dd></div>'; }).join('') + '</dl>' +
+      '<p class="notes"><span>' + esc(dupesText) + '</span>' + tx('span', 'methodNote') + '</p>';
+
+    if (r.topics.length) {
+      var openTp = null;
+      h += '<div class="res-grid"><div class="res-main">' +
+        tx('h2', 'topicsTitle', 'class="kicker b"') +
+        '<ol class="ledger">' + r.topics.map(function (tp, i) {
+          var d = topicDef(tp.id)[L], open = s.openTopic === tp.id;
+          if (open) openTp = tp;
+          var count = tf('countOf', { c: tp.ids.length, n: r.total });
+          return '<li class="' + (open ? 'open' : '') + '">' +
+            '<div class="rank" aria-hidden="true">' + String(i + 1).padStart(2, '0') + '</div>' +
+            '<div style="min-width:0">' +
+              '<h3 class="tname"><span class="sr">' + esc(tf('rankSr', { n: i + 1 })) + ' </span>' + esc(d.name) + '</h3>' +
+              '<div class="countrow"><span class="c">' + esc(count) + '</span>' +
+                '<div class="bar" aria-hidden="true"><div class="f" style="width:' + (tp.ids.length / r.total * 100).toFixed(1) + '%"></div><div class="r"></div></div></div>' +
+              '<p class="check">' + tx('span', 'suggested', 'class="kicker"') + esc(d.check) + '</p>' +
+              '<button type="button" id="tgl-' + tp.id + '" class="btn-link toggle" aria-expanded="' + open + '" aria-controls="evpanel" data-action="toggle" data-v="' + tp.id + '">' + esc(open ? T.hideSources : T.showSources) + '</button>' +
+            '</div>' +
+            (open && s.narrow ?
+              '<div id="evpanel" role="region" class="inline-ev' + anim('panel') + '" aria-label="' + esc(tf('evidenceFor', { topic: d.name })) + '">' +
+                tx('p', 'evidenceTitle', 'class="kicker b"') + tx('p', 'evidenceHint', 'class="ev-hint"') + evidenceList(tp) +
+              '</div>' : '') +
+          '</li>';
+        }).join('') + '</ol>' + othersHTML() + '</div>';
+
+      if (!s.narrow) {
+        h += '<aside id="evpanel" class="panel" aria-label="' + esc(T.evidenceTitle) + '">' + tx('p', 'evidenceTitle', 'class="kicker b"');
+        if (openTp) {
+          var od = topicDef(openTp.id)[L];
+          h += '<div class="' + anim('panel') + '">' +
+            '<div class="panel-h"><h3>' + esc(od.name) + '<span>' + esc(tf('countOf', { c: openTp.ids.length, n: r.total })) + '</span></h3>' +
+              tx('button', 'closePanel', 'type="button" id="panelClose" class="panel-x" data-action="closePanel"') + '</div>' +
+            tx('p', 'evidenceHint', 'class="ev-hint"') + evidenceList(openTp) + '</div>';
+        } else {
+          h += tx('p', 'evidenceEmpty', 'class="panel-empty"');
+        }
+        h += '</aside>';
+      }
+      h += '</div>' + actionHTML();
+    } else {
+      h += '<div class="empty" role="status">' +
+        tx('h2', 'emptyTitle') + tx('p', 'emptyBody', 'class="body"') +
+        '<p class="un">' + esc(tf('emptyUnmatched', { n: r.unmatched, t: r.total })) + '</p>' + othersHTML() +
+        '<button type="button" id="showAll" class="btn btn-o" aria-expanded="' + s.showAll + '" data-action="showAll">' + esc(s.showAll ? T.hideAll : T.showAll) + '</button>' +
+        (s.showAll ? '<ul class="slips' + anim('showAll') + '">' + r.reviews.map(function (x) { return slip(x, TOPICS.map(function (z) { return z.id; })); }).join('') + '</ul>' : '') +
+      '</div>';
+    }
+    h += feedbackHTML() + tailHTML() + '</section>';
+    return h;
+  }
+
+  function actionHTML() {
+    var s = state, r = s.result, L = s.lang, T = t(), e = s.actErr, right;
+    if (!s.actSaved) {
+      right = '<div class="act-form">' +
+        '<fieldset id="actField" tabindex="-1"' + (e.topic ? ' aria-describedby="actTopicErr"' : '') + '>' +
+          tx('legend', 'actionChoose') +
+          '<div class="opts">' + r.topics.map(function (tp) {
+            var d = topicDef(tp.id)[L];
+            return '<label class="opt"><input type="radio" id="opt-' + tp.id + '" name="actTopic" value="' + tp.id + '"' + (s.act.topic === tp.id ? ' checked' : '') + '>' +
+              '<span><b>' + esc(d.name) + '</b><i>' + esc(d.check) + '</i></span></label>';
+          }).join('') + '</div>' +
+          (e.topic ? msg('actTopicErr', 'hintTag', T.errNoTopic) : '') +
+        '</fieldset>' +
+        '<div class="pair">' +
+          '<div>' + tx('label', 'personLabel', 'for="person" class="lbl"') + tx('p', 'optional', 'id="personHelp" class="help"') +
+            '<input id="person" class="input" type="text" autocomplete="name" value="' + esc(s.act.person) + '" placeholder="' + esc(T.personPh) + '" data-i18n-placeholder="personPh" aria-describedby="personHelp"></div>' +
+          '<div>' + tx('label', 'dateLabel', 'for="date" class="lbl"') + tx('p', 'dateHelp', 'id="dateHelp" class="help"') +
+            '<input id="date" class="input" type="date" min="' + localIso(0) + '" value="' + esc(s.act.date) + '" aria-invalid="' + !!e.date + '" aria-describedby="dateHelp' + (e.date ? ' dateErr' : '') + '">' +
+            (e.date ? msg('dateErr', 'hintTag', T.errNoDate) : '') + '</div>' +
+        '</div>' +
+        '<div>' + tx('button', 'saveAction', 'type="button" id="saveAction" class="btn btn-p" data-action="saveAction"') + '</div>' +
+      '</div>';
+    } else {
+      var d = topicDef(s.actSaved.topic)[L];
+      right = '<div class="saved' + anim('actSaved', 'anim-s') + '" role="status">' +
+        '<p class="head">' + tx('span', 'savedTag', 'class="oktag"') + tx('span', 'actionSavedMsg') + '</p>' +
+        '<p class="nm">' + esc(d.name) + '</p><p class="ck">' + esc(d.check) + '</p>' +
+        '<dl>' + tx('dt', 'personLabel') + '<dd>' + esc(s.actSaved.person.trim() || T.noPerson) + '</dd>' +
+          tx('dt', 'dateLabel') + '<dd class="mono">' + esc(fmtDate(s.actSaved.date)) + '</dd></dl>' +
+        tx('button', 'editAction', 'type="button" id="editAction" class="btn btn-sm" data-action="editAction"') +
+      '</div>';
+    }
+    return '<section id="actSection" class="band act" aria-labelledby="actTitle">' +
+      '<div class="band-l">' + tx('p', 'actionKicker', 'class="kicker b"') + tx('h2', 'actionTitle', 'id="actTitle"') + tx('p', 'actionNote', 'class="note"') + '</div>' +
+      '<div class="band-r">' + right + '</div></section>';
+  }
+
+  function feedbackHTML() {
+    var s = state, T = t();
+    return '<section class="band fb" aria-labelledby="fbTitle">' +
+      '<div class="band-l">' + tx('p', 'feedbackKicker', 'class="kicker b"') + tx('h2', 'feedbackQ', 'id="fbTitle"') + '</div>' +
+      '<div class="band-r">' +
+        '<div role="group" aria-labelledby="fbTitle"' + (s.fbErr ? ' aria-describedby="fbErr"' : '') + '>' +
+          '<div class="rates">' + [1, 2, 3, 4, 5].map(function (n) {
+            return '<button type="button" id="rate-' + n + '" aria-pressed="' + (s.fb.rating === n) + '" aria-label="' + esc(tf('rateAria', { n: n })) + '" data-action="rate" data-v="' + n + '">' + n + '</button>';
+          }).join('') + '</div>' +
+          '<div class="scale">' + tx('span', 'scaleLow') + tx('span', 'scaleHigh') + '</div>' +
+          (s.fbErr ? msg('fbErr', 'hintTag', T.errNoRating) : '') +
+        '</div>' +
+        '<div>' + tx('label', 'commentLabel', 'for="comment" class="lbl"') + tx('p', 'optional', 'class="help"') +
+          '<textarea id="comment" class="textarea" rows="3" placeholder="' + esc(T.commentPh) + '" data-i18n-placeholder="commentPh">' + esc(s.fb.comment) + '</textarea></div>' +
+        '<div class="actions">' +
+          tx('button', 'saveFeedback', 'type="button" id="saveFb" class="btn btn-p" data-action="saveFb"') +
+          tx('button', 'exportBtn', 'type="button" id="exportBtn" class="btn btn-s" data-action="export"') +
+        '</div>' +
+        '<div class="status" role="status" aria-live="polite">' +
+          (s.fbSaved ? '<p class="okline' + anim('fbSaved', 'anim-s') + '">' + tx('span', 'savedTag', 'class="oktag"') + tx('span', 'fbSaved') + '</p>' : '') +
+          (s.exported ? '<p class="okline' + anim('exported', 'anim-s') + '">' + tx('span', 'exportedTag', 'class="oktag"') + '<span>' + esc(tf('exported', { file: s.exported })) + '</span></p>' : '') +
+        '</div>' +
+      '</div></section>';
+  }
+
+  function tailHTML() {
+    var T = t(), armed = state.resetArmed;
+    return '<div class="tail">' +
+      tx('button', 'editInput', 'type="button" id="editInput" class="btn btn-o" data-action="editInput"') +
+      '<button type="button" id="resetBtn" class="btn btn-o" data-action="reset" data-armed="' + armed + '" aria-describedby="resetNote">' + esc(armed ? T.resetArm : T.reset) + '</button>' +
+      '<span id="resetNote" class="hint" aria-live="polite">' + esc(armed ? T.resetHint : '') + '</span>' +
+    '</div>';
+  }
+
+  /* --------------------------------------------------------------- render */
+  function render(opts) {
+    var a = document.activeElement, focusId = a && a.id && root.contains(a) ? a.id : null, sel = null, ta = null;
+    if (focusId && a.setSelectionRange && typeof a.selectionStart === 'number') { try { sel = [a.selectionStart, a.selectionEnd]; } catch (e) {} }
+    if (focusId && a.tagName === 'TEXTAREA') ta = a.scrollTop;
+
+    document.documentElement.lang = state.lang;
+    document.title = state.screen === 'results' && state.result ? tf('resultsTitle', { venue: state.venue.trim() }) + ' · ReviewIQ' : 'ReviewIQ';
+    root.setAttribute('lang', state.lang);
+    root.innerHTML = headerHTML() +
+      '<main class="wrap">' + (state.screen === 'results' && state.result ? resultsHTML() : entryHTML()) + '</main>' +
+      '<footer class="ftr">' + tx('p', 'footer', 'class="wrap"') + '</footer>';
+    applyI18n(root);
+    flash = {};
+
+    if (focusId && !opts.noRestore) {
+      var el = document.getElementById(focusId);
+      if (el) {
+        el.focus({ preventScroll: true });
+        if (sel) { try { el.setSelectionRange(sel[0], sel[1]); } catch (e) {} }
+        if (ta != null) el.scrollTop = ta;
+      }
+    }
+  }
+
+  /** data-i18n binding: fills text and placeholders from the active dictionary */
+  function applyI18n(scope) {
+    var T = t();
+    scope.querySelectorAll('[data-i18n]').forEach(function (el) { var k = el.getAttribute('data-i18n'); if (k in T) el.textContent = T[k]; });
+    scope.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) { var k = el.getAttribute('data-i18n-placeholder'); if (k in T) el.setAttribute('placeholder', T[k]); });
+  }
+
+  /* -------------------------------------------------------------- actions */
+  function without(obj, key) { var o = Object.assign({}, obj); delete o[key]; return o; }
+
+  function submit() {
+    var s = state, p = parse(s.raw), e = {};
+    if (!s.venue.trim()) e.venue = true;
+    if (p.longLine) e.reviews = { code: 'long', line: p.longLine };
+    else if (p.uniq.length < 3) e.reviews = { code: 'few', u: p.uniq.length };
+    else if (p.uniq.length > 200) e.reviews = { code: 'many', u: p.uniq.length };
+    if (!s.perm) e.perm = true;
+    if (Object.keys(e).length) {
+      set({ errors: e, notice: null });
+      focusLater(e.venue ? 'venue' : e.reviews ? 'reviews' : 'perm');
+      return;
+    }
+    var result = analyze(p.uniq, p.dupes, p.lines);
+    set(Object.assign(blank(), { venue: s.venue, raw: s.raw, perm: s.perm, result: result, screen: 'results' }), { noRestore: true });
+    window.scrollTo(0, 0);
+    var h = document.getElementById('resTitle'); if (h) h.focus({ preventScroll: true });
+  }
+
+  function exportSession() {
+    var s = state, r = s.result;
+    var file = 'reviewiq-session-' + localIso(0) + '.json';
+    var data = {
+      app: 'ReviewIQ prototype', method: 'keyword dictionary', exportedAt: new Date().toISOString(), interfaceLanguage: s.lang,
+      venue: s.venue.trim(),
+      input: { nonEmptyLines: r.lines, uniqueReviews: r.total, exactDuplicatesRemoved: r.dupes, reviewsWithoutMatch: r.unmatched },
+      reviews: r.reviews.map(function (x) { return { id: x.id, language: x.lang, text: x.text, topics: Object.keys(x.hits) }; }),
+      topics: r.topics.map(function (tp, i) { var d = topicDef(tp.id); return { rank: i + 1, id: tp.id, name: d.en.name, count: tp.ids.length, reviewIds: tp.ids, suggestedCheck: d.en.check }; }),
+      otherMatches: r.others.map(function (tp) { return { id: tp.id, count: tp.ids.length, reviewIds: tp.ids }; }),
+      action: s.actSaved ? { topic: s.actSaved.topic, check: topicDef(s.actSaved.topic).en.check, personResponsible: s.actSaved.person.trim() || null, reviewDate: s.actSaved.date } : null,
+      feedback: s.fbData
+    };
+    try {
+      var url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+      var a = document.createElement('a'); a.href = url; a.download = file; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+    } catch (e) {}
+    flash.exported = true;
+    set({ exported: file });
+  }
+
+  function reset() {
+    if (!state.resetArmed) {
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(function () { if (state.resetArmed) set({ resetArmed: false }); }, 5000);
+      set({ resetArmed: true });
+      return;
+    }
+    clearTimeout(resetTimer);
+    set(Object.assign(blank(), { notice: 'reset' }), { noRestore: true });
+    window.scrollTo(0, 0);
+    focusLater('venue');
+  }
+
+  var ACTIONS = {
+    lang: function (v) {
+      try { localStorage.setItem('riq-lang', v); } catch (e) {}
+      set({ lang: v });
+    },
+    demo: function () { set({ venue: state.venue || DEMO.venue, raw: DEMO.raw, errors: without(state.errors, 'reviews'), notice: null }); },
+    demoEmpty: function () { set({ venue: state.venue || DEMO_EMPTY.venue, raw: DEMO_EMPTY.raw, errors: without(state.errors, 'reviews'), notice: null }); },
+    toggle: function (id) { var open = state.openTopic === id; if (!open) flash.panel = true; set({ openTopic: open ? null : id }); },
+    closePanel: function () {
+      var id = state.openTopic; set({ openTopic: null }, { noRestore: true });
+      focusLater('tgl-' + id);
+    },
+    showAll: function () { if (!state.showAll) flash.showAll = true; set({ showAll: !state.showAll }); },
+    saveAction: function () {
+      var a = state.act, e = {};
+      if (!a.topic) e.topic = true;
+      if (!a.date) e.date = true;
+      if (e.topic || e.date) { set({ actErr: e }); focusLater(e.topic ? 'actField' : 'date'); return; }
+      flash.actSaved = true;
+      set({ actErr: {}, actSaved: Object.assign({}, a) }, { noRestore: true });
+      var box = document.querySelector('.saved'); if (box) { box.setAttribute('tabindex', '-1'); box.focus({ preventScroll: true }); }
+    },
+    editAction: function () { set({ actSaved: null }, { noRestore: true }); focusLater('actField'); },
+    rate: function (n) { set({ fb: Object.assign({}, state.fb, { rating: Number(n) }), fbErr: false, fbSaved: false }); },
+    saveFb: function () {
+      var fb = state.fb;
+      if (!fb.rating) { set({ fbErr: true, fbSaved: false }); return; }
+      flash.fbSaved = true;
+      set({ fbSaved: true, fbErr: false, fbData: { rating: fb.rating, comment: fb.comment.trim() } });
+    },
+    export: exportSession,
+    editInput: function () {
+      set({ screen: 'entry', notice: null, resetArmed: false }, { noRestore: true });
+      window.scrollTo(0, 0); focusLater('reviews');
+    },
+    reset: reset
+  };
+
+  root.addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-action]');
+    if (!b || !root.contains(b)) return;
+    var fn = ACTIONS[b.getAttribute('data-action')];
+    if (fn) fn(b.getAttribute('data-v'));
+  });
+
+  root.addEventListener('submit', function (ev) {
+    if (ev.target.id === 'entryForm') { ev.preventDefault(); submit(); }
+  });
+
+  // Typing does not re-render (keeps caret and IME state); only an existing error forces a refresh.
+  root.addEventListener('input', function (ev) {
+    var el = ev.target, id = el.id;
+    if (id === 'venue') {
+      state.venue = el.value; state.notice = null;
+      if (state.errors.venue) set({ errors: without(state.errors, 'venue') });
+    } else if (id === 'reviews') {
+      state.raw = el.value; state.notice = null;
+      if (state.errors.reviews) set({ errors: without(state.errors, 'reviews') });
+      else {
+        var p = parse(state.raw), c = document.getElementById('counter');
+        if (c) c.textContent = p.lines ? tf('counter', { lines: p.lines, u: p.uniq.length, d: p.dupes }) : t().counterEmpty;
+      }
+    } else if (id === 'person') {
+      state.act = Object.assign({}, state.act, { person: el.value });
+    } else if (id === 'date') {
+      state.act = Object.assign({}, state.act, { date: el.value });
+      if (state.actErr.date) set({ actErr: Object.assign({}, state.actErr, { date: false }) });
+    } else if (id === 'comment') {
+      state.fb = Object.assign({}, state.fb, { comment: el.value });
+      if (state.fbSaved) set({ fbSaved: false });
+    }
+  });
+
+  root.addEventListener('change', function (ev) {
+    var el = ev.target;
+    if (el.id === 'perm') set({ perm: el.checked, errors: without(state.errors, 'perm') });
+    else if (el.name === 'actTopic') set({ act: Object.assign({}, state.act, { topic: el.value }), actErr: Object.assign({}, state.actErr, { topic: false }) });
+  });
+
+  /* ------------------------------------------------------------- presets */
+  // ?preset=demo-input|errors|results|empty|action-hint|saved — reproduces each frame of the screens board.
+  function applyPreset(p) {
+    var base = blank();
+    if (!p || p === 'blank') return;
+    var demo = p === 'empty' ? DEMO_EMPTY : DEMO;
+    if (p === 'demo-input') { Object.assign(state, base, { venue: demo.venue, raw: demo.raw }); return; }
+    if (p === 'errors') {
+      Object.assign(state, base, { raw: demo.raw.split('\n').slice(0, 2).join('\n'), errors: { venue: true, reviews: { code: 'few', u: 2 }, perm: true } });
+      return;
+    }
+    var pr = parse(demo.raw), result = analyze(pr.uniq, pr.dupes, pr.lines);
+    var st = Object.assign(base, { venue: demo.venue, raw: demo.raw, perm: true, result: result, screen: 'results',
+      openTopic: p === 'results' && result.topics[0] ? result.topics[0].id : null, showAll: p === 'empty' });
+    if (p === 'action-hint') st.actErr = { topic: true, date: true };
+    if (p === 'saved' && result.topics[1]) {
+      st.act = { topic: result.topics[1].id, person: 'Айгерім', date: localIso(7) };
+      st.actSaved = Object.assign({}, st.act); st.fb = { rating: 4, comment: '' }; st.fbSaved = true; st.fbData = { rating: 4, comment: '' };
+    }
+    Object.assign(state, st);
+  }
+
+  /* ---------------------------------------------------------------- boot */
+  var preset = params.get('preset');
+  applyPreset(preset);
+  state.narrow = root.getBoundingClientRect().width < 760;
+  render({});
+  if (preset === 'action-hint' || preset === 'saved') {
+    setTimeout(function () { scrollToEl(document.getElementById('actSection')); }, 80);
+  }
+
+  if (window.ResizeObserver) {
+    new ResizeObserver(function (en) {
+      var n = en[0].contentRect.width < 760;
+      if (n !== state.narrow) set({ narrow: n });
+    }).observe(root);
+  }
+})();
+</script>
+</body>
+</html>
