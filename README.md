@@ -1,25 +1,50 @@
-# CODING AGENTS: READ THIS FIRST
+# ReviewIQ MVP v1.0
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+ReviewIQ helps owners of small independent cafés in Kazakhstan turn a batch of customer reviews from 2GIS or Google Maps into a short list of recurring problems. Each problem shows the reviews behind it. The owner then picks one check to do next, with a person and a date. The interface is in English and Kazakh. Reviews can be in Russian, Kazakh or a mix.
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+## What it does
 
-## What you should do — IMPORTANT
+1. **Entry:** venue name, reviews pasted one per line (3–200 unique, up to 4,000 characters each) and a permission checkbox. "Load demo reviews" fills in 12 fictional reviews.
+2. **Analysis:** lines are trimmed, normalised to NFC and de-duplicated. Each review is matched against a small keyword dictionary. A topic counts as recurring only if at least 2 reviews match it. The top 3 are shown as "3 of 12 reviews" with a bar.
+3. **Evidence:** the source reviews for a topic, with IDs (R01…), the matched keyword highlighted and an approximate language tag (RU / KZ / Mixed).
+4. **Action:** choose one suggested check and enter the person responsible and a review date.
+5. **Feedback:** a 1–5 usefulness score and an optional comment.
+6. **Export:** downloads `ReviewIQ_session_YYYYMMDD-HHMM.json` with counts, the action, the feedback and an event log. **It contains no review text.**
 
-**Read the chat transcripts first.** There are 1 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+If no topic repeats, the app says so and shows how many reviews had no match. It never invents a topic.
 
-**Read `project/ReviewIQ Screens.dc.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+## Architecture
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+- **One static page:** `index.html` holds all the HTML, CSS and plain JavaScript. There is no framework, build step or backend.
+- **In-memory state:** a single `state` object is re-rendered into the page. Every value a user enters is HTML-escaped before display. Keyword highlighting escapes the text first and only then wraps matches in `<mark>`.
+- **Topic dictionary:** the `TOPICS` array at the top of the script. To add a topic, add `{ id, keywords, name: {en, kk}, check: {en, kk} }`.
+- **Strings:** all UI text lives in `const i18n = { en, kk }`. Static text is bound through `data-i18n`, `data-i18n-placeholder` and `data-i18n-aria`. Switching language keeps the whole session.
+- **Local export:** the JSON file is built in the browser and downloaded as a Blob.
 
-## About the design files
+`screens.html` is a review board that shows every state at 1440 px and 375 px in both languages. It loads the app with `index.html?lang=kk&preset=errors` and similar URLs. The app itself doesn't need it.
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+## Data storage and privacy
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+- Review text stays in the browser tab's memory and is lost when the tab is closed or the session is reset. It is never sent anywhere and never written to storage.
+- The only thing stored is the chosen interface language (`localStorage` key `reviewiq-lang`). If storage is blocked, the app falls back to English.
+- No cookies, analytics or tracking.
+- Users must confirm they have permission to use the reviews and have removed personal details.
 
-## Bundle contents
+## Dependencies
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `# ReviewIQ café app` project files (HTML prototypes, assets, components)
+The only dependency is the IBM Plex Sans, Serif and Mono fonts from Google Fonts. Loading them makes one request to Google, which therefore sees the visitor's IP address. If the fonts can't load (offline or blocked), the app falls back to system fonts that cover Kazakh letters: PT Sans/Serif, Segoe UI, Roboto, Noto or Arial.
+
+## Deploy
+
+- **Locally:** open `index.html` in a browser. A `file://` address works.
+- **GitHub Pages:** push the repository, then go to Settings → Pages → Deploy from a branch, choose the branch and `/ (root)`. The app is served at `https://<user>.github.io/<repo>/`.
+- **Netlify:** drag the folder onto app.netlify.com/drop, or connect the repository with no build command and publish directory `.`.
+
+## Known limitations
+
+- The dictionary is small (3 topics, 7 keywords). It misses slang, typos, synonyms, negation ("не долго ждали" still counts as waiting time) and many forms of code-switching.
+- Counts are keyword matches, not proof of business impact. With fewer than 30 reviews the report is marked as an exploratory sample.
+- Nothing is kept between sessions, and there is no integration with 2GIS or Google Maps: reviews are pasted by hand.
+- **The Kazakh text is a draft that needs review by a Kazakh speaker.** Every Kazakh string is listed in a comment above `i18n.kk`.
+- The language tag is a rough guess based on Kazakh-specific letters and a few common Russian words.
+- The pilot terms (7-day trial, then optional 7,000 KZT per month) are informational only. No payment is collected in the app.
